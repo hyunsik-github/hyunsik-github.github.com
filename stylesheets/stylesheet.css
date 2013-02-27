@@ -234,6 +234,11 @@ strong {
   font-weight: bold;
 }
 
+category {
+  font-weight: bold;
+  color: #303030;
+}
+
 em {
   font-style: italic;
 }
@@ -335,6 +340,7 @@ footer {
   margin-top: 40px;
   padding-top: 20px;
   padding-bottom: 30px;
+  text-align: center; 	
   font-size: 13px;
   color: #aaa;
 }
