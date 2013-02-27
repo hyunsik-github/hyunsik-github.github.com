@@ -95,6 +95,11 @@ header h2 {
   margin: 0 auto;
 }
 
+.timeline {
+  width: 900px;
+  margin: 0 auto;
+}
+
 #container .inner img {
   max-width: 100%;
 }
@@ -167,14 +172,14 @@ a.button span {
 }
 
 #gom-on-menu span {
-  background: transparent url(../images/octocat-icon.png) 12px 50% no-repeat;
+  background: transparent url(../images/gom.jpg) 12px 50% no-repeat;
 }
 #gom-on-menu {
   margin-right: 0;
 }
 
 #baekho-on-menu span {
-  background: transparent url(../images/octocat-icon.png) 12px 50% no-repeat;
+  background: transparent url(../images/baekho.jpg) 12px 50% no-repeat;
 }
 #baekho-on-menu {
   margin-right: 0;
