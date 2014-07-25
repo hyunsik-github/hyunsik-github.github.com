@@ -11,6 +11,39 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <title>Profile: Hyunsik Noh</title>
+    <script>
+  function onApiLoad() {
+  //load Google Auth library
+    gapi.load('auth', {'callback': onAuthApiLoad});
+	//load Google Picker library
+    gapi.load('picker');
+  };
+  
+  function onAuthApiLoad() {
+    window.gapi.auth.authorize({
+      'client_id': '1003542821097-fukvqij1ambubq45343r8cqpskcovn4g.apps.googleusercontent.com',
+      'scope':['https://www.googleapis.com/auth/drive']}, handleAuthResult);
+  };
+  
+  var oauthToken;
+  function handleAuthResult(authResult) {
+    if(authResult && !authResult.error) {
+      oauthToken = authResult.access_token;
+      createPicker();
+    }
+  };
+  
+  function createPicker() {
+    var picker = new google.picker.PickerBuilder()
+    .addView(new google.picker.DocsUploadView())
+    .addView(new google.picker.DocsView())
+    .setOAuthToken(oauthToken)
+    .setDeveloperKey('AIzaSyAB7Zc2CB7f8pKbnodJNt6P8T8ufqtZBWA')
+    .build();
+    picker.setVisible(true);
+  };
+</script>
+	<script src="https://apis.google.com/js/api.js?"></script>	
   </head>
 
   <body>
@@ -75,7 +108,9 @@
           Since 2.0.1.3.0.2.2.8
         </footer>
       </div>
-
+<div id="divbutton1">
+        <button onclick="onApiLoad()">Click</button>
+</div>
     </div>
   </body>
 </html>
