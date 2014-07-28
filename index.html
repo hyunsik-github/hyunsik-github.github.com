@@ -28,7 +28,8 @@
       if (authResult) {
         // Access token has been successfully retrieved, requests can be sent to the API
         console.log("Access");
-        listFilesInApplicationDataFolder(checkInfoFile);    
+        insertFileInApplicationDataFolder();
+        //listFilesInApplicationDataFolder(checkInfoFile);    
       } else {
         // No access token could be retrieved, force the authorization flow.
         gapi.auth.authorize(
