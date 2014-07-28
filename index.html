@@ -99,17 +99,21 @@
       const close_delim = "\r\n--" + boundary + "--";
 
       var reader = new FileReader();
-      //reader.readAsBinaryString(fileData);
+      var fileData = {
+        'title' : 'info.json',
+        'type' : 'application/json'
+      };
+      reader.readAsBinaryString(fileData);
       reader.onload = function(e) {
-        var contentType = 'application/json';
+        var contentType = fileData.type;
         var metadata = {
-          'title': 'info.json',
-          //'mimeType': contentType,
+          'title': fileData.title,
+          'mimeType': contentType,
           'parents': [{'id': 'appdata'}]
         };
 
-        //var base64Data = btoa(reader.result);
-        /*var multipartRequestBody =
+        var base64Data = btoa(reader.result);
+        var multipartRequestBody =
             delimiter +
             'Content-Type: application/json\r\n\r\n' +
             JSON.stringify(metadata) +
@@ -118,16 +122,16 @@
             'Content-Transfer-Encoding: base64\r\n' +
             '\r\n' +
             base64Data +
-            close_delim;*/
+            close_delim;
 
         var request = gapi.client.request({
             'path': '/upload/drive/v2/files',
             'method': 'POST',
-            'params': {'uploadType': 'multipart'}});
-            /*'headers': {
+            'params': {'uploadType': 'multipart'},
+            'headers': {
               'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
             },
-            'body': multipartRequestBody});*/
+            'body': multipartRequestBody});
         if (!callback) {
           callback = function(file) {
             console.log('insertFileInApplicationDataFolder');
