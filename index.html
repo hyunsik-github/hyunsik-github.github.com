@@ -101,7 +101,7 @@
       var reader = new FileReader();
       //reader.readAsBinaryString(fileData);
       reader.onload = function(e) {
-        var contentType = fileData.type || 'application/octet-stream';
+        var contentType = 'application/json';
         var metadata = {
           'title': 'info.json',
           //'mimeType': contentType,
