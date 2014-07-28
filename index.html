@@ -70,7 +70,7 @@
       loadClient(function () {
         var retrievePageOfFiles = function(request, result) {
           request.execute(function(resp) {
-            console.log(resp.items.title);
+            console.log(resp.items);
             result = result.concat(resp.items);
             var nextPageToken = resp.nextPageToken;
             if (nextPageToken) {
@@ -85,7 +85,8 @@
         }
         
         var listRequest = gapi.client.drive.files.list({
-          'q': '\'appdata\' in parents and title = \'info.json\''
+          'q': '\'appdata\' in parents'
+          //'q': '\'appdata\' in parents and title = \'info.json\''
         });
         retrievePageOfFiles(listRequest, []);
       });
