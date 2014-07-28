@@ -1,114 +1,103 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>Profile: Hyunsik Noh</title>
-    <script>
-  function onApiLoad() {
-  //load Google Auth library
-    gapi.load('auth', {'callback': onAuthApiLoad});
-	//load Google Picker library
-    gapi.load('picker');
-  };
+<head>
+    <title>Discover Drive</title> 
   
-  function onAuthApiLoad() {
-    window.gapi.auth.authorize({
-      'client_id': '1003542821097-fukvqij1ambubq45343r8cqpskcovn4g.apps.googleusercontent.com',
-      'scope':['https://www.googleapis.com/auth/drive']}, handleAuthResult);
-  };
-  
-  var oauthToken;
-  function handleAuthResult(authResult) {
-    if(authResult && !authResult.error) {
-      oauthToken = authResult.access_token;
-      createPicker();
+    <script type="text/javascript">
+    var CLIENT_ID="1003542821097-6459g4dgnglvat9mqu5ihniodtqlvbqn.apps.googleusercontent.com";
+    var SCOPES=[
+      'https://www.googleapis.com/auth/drive',
+      'https://www.googleapis.com/auth/drive.file',
+      'https://www.googleapis.com/auth/drive.appdata'
+      ];
+    /**
+    * Called when the client library is loaded.
+    */  
+    function handleClientLoad() {
+      checkAuth();
     }
-  };
-  
-  function createPicker() {
-    var picker = new google.picker.PickerBuilder()
-    .addView(new google.picker.DocsUploadView())
-    .addView(new google.picker.DocsView())
-    .setOAuthToken(oauthToken)
-    .setDeveloperKey('AIzaSyAB7Zc2CB7f8pKbnodJNt6P8T8ufqtZBWA')
-    .build();
-    picker.setVisible(true);
-  };
-</script>
-	<script src="https://apis.google.com/js/api.js?"></script>	
-  </head>
+    
+    function checkAuth() {
+      gapi.auth.authorize(
+        {'client_id': CLIENT_ID, 'scope' : SCOPES.join(' '), 'immediate': false}, 
+        handleAuthResult
+      );
+    }
 
-  <body>
-    <div id="container">
-      <div class="inner">
-
-        <header>
-          <h1>Hyunsik Noh</h1>          
-        </header>
-
-        <section id="downloads" class="clearfix">
-          <a href="http://hyunsik-github.github.com" id="mari-on-menu" class="button"><span>Profile</span></a>
-          <a href="http://github.com/hyunsik-github" id="baekho-on-menu" class="button"><span>GitHub</span></a>
-          <a href="http://kenoz.tistory.com" id="gom-on-menu" class="button" ><span>Blog</span></a>
-          <button onclick="onApiLoad()"><span>Blog</span></a>
-        </section>
-        <hr>
-        <section id="main_content">
-          <div align="left" style="border:1px solid red; display: inline">
-            <category>Skill</category>
-          </div></br>
-            &nbsp; &nbsp; &nbsp; &nbsp;Java, Eclipse Plugin, C++
-
-          <br></br>
-
-          <div align="left" style="border:1px solid red; display: inline">
-            <category>Link</category>
-          </div></br>            
-            <category>&nbsp; &nbsp; &nbsp; &nbsp;Github: </category>
-            <a href="http://github.com/hyunsik-github">
-              &nbsp;http://github.com/hyunsik-github
-            </a></br>
-            <category>&nbsp; &nbsp; &nbsp; &nbsp;Blog: </category>
-            <a href="http://kenoz.tistory.com">
-              &nbsp;http://kenoz.tistory.com
-            </a></br>
-
-          <br></br>
-          
-          <div align="left" style="border:1px solid red; display: inline">
-            <category>Email</category>
-          </div></br>
-            <a href="mailto:kenoz.korea@gmail.com">
-              &nbsp; &nbsp; &nbsp; &nbsp;kenoz.korea@gmail.com
-            </a>
-
-          <br></br> 
-
-        </section>
-
+    function handleAuthResult(authResult) {
+      if (authResult) {
+        // Access token has been successfully retrieved, requests can be sent to the API
+        console.log("Access");
+        listFilesInApplicationDataFolder(checkInfoFile);    
+      } else {
+        // No access token could be retrieved, force the authorization flow.
+        gapi.auth.authorize(
+          {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false},
+          handleAuthResult);
+      }
+    }
+    
+    function loadClient(callback) {
+      gapi.client.load('drive', 'v2', callback);
+    }
+    
+    function checkInfoFile(result) {      
+      if(result.length == 0) {
+        console.log('No Info File');
+        createApplicationDataFile();
+      } else {
+        console.log('No need Info File');
+      }     
+    }
+    
+    function createApplicationDataFile() {
+    }
+      
+    function printApplicationDataFolderMetadata() {
+      loadClient(function () {
+        var request = gapi.client.drive.files.get({
+          'fileId': 'appdata'
+        });
+        request.execute(function(resp) {
+          console.log('Id: ' + resp.id);
+          console.log('Title: ' + resp.title);
+        });
+      });
+    }
+    
+    function listFilesInApplicationDataFolder(callback) {
+      loadClient(function () {
+        var retrievePageOfFiles = function(request, result) {
+          request.execute(function(resp) {
+            result = result.concat(resp.items);
+            var nextPageToken = resp.nextPageToken;
+            if (nextPageToken) {
+              request = gapi.client.drive.files.list({
+                'pageToken': nextPageToken
+              });
+              retrievePageOfFiles(request, result);
+            } else {
+              callback(result);
+            }
+          });
+        }
         
-        
-      </div>
-
-      <div class="timeline">
-        <iframe align='center' src='http://embed.verite.co/timeline/?source=0Ajda27Uw4ZPhdFhoS0dPdC02N1ZoSnFRcHRxVFhHUnc&font=Bevan-PotanoSans&maptype=toner&lang=en&height=550' width  ='100%' height='550' frameborder='0'>
-        </iframe>
-        <br></br>
-      </div>
-
-      <div class="inner">
-        <footer>
-          Since 2.0.1.3.0.2.2.8
-        </footer>
-      </div>
-    </div>
-  </body>
+        var listRequest = gapi.client.drive.files.list({
+          'q': '\'appdata\' in parents'
+        });
+        retrievePageOfFiles(listRequest, []);
+      });
+    }
+    
+    //check file in AppData
+    // if no, make new one.
+  </script>
+  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>    
+</head>
+<body>
+<!--<div class="g-savetodrive" data-src="http://pagead2.googlesyndication.com/simgad/14610098017098633517" data-filename="test.jpg" data-sitename="testSite"></div>-->
+<div id="divbutton1">
+        <button onclick="printApplicationDataFolderMetadata()">Click</button>
+</div>
+</body>
 </html>
