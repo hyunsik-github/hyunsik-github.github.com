@@ -83,7 +83,7 @@
         }
         
         var listRequest = gapi.client.drive.files.list({
-          'q': '\'appdata\' in parents'
+          'q': '\'appdata\' in parents and title = \'info\''
         });
         retrievePageOfFiles(listRequest, []);
       });
