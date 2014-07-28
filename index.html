@@ -70,6 +70,7 @@
       loadClient(function () {
         var retrievePageOfFiles = function(request, result) {
           request.execute(function(resp) {
+            console.log(resp.items.title);
             result = result.concat(resp.items);
             var nextPageToken = resp.nextPageToken;
             if (nextPageToken) {
@@ -127,6 +128,7 @@
             'body': multipartRequestBody});*/
         if (!callback) {
           callback = function(file) {
+            console.log('insertFileInApplicationDataFolder');
             console.log(file)
           };
         }
