@@ -94,7 +94,11 @@
       }     
 
       if(isFind) {
-        executeWithDrive(getFileContent(item));
+        var data = executeWithDrive(getFileContent(item));
+        var json = JSON.parse(data);
+        for(var key in json) {
+          console.log(key + ":" + json[key]);
+        }
       } else {
         console.log('No Data File');
         createData();
@@ -102,26 +106,24 @@
     }
     
     function getFileContent(file) {
-    var url;
+      var url;
       if (file.downloadUrl) {
         url = file.downloadUrl;
-  } else if (file.exportLinks){
-    url = file['exportLinks']['text/plain'];
-  }
-
-  url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs&exportFormat=txt';
-  var accessToken = gapi.auth.getToken().access_token;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url);
-    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-    xhr.onload = function() {
-      console.log(xhr.responseText);
-    };
-    xhr.onerror = function() {
-      
-    };
-    xhr.send();
-
+      } else if (file.exportLinks){
+        url = file['exportLinks']['text/plain'];
+      }
+url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs&exportFormat=txt';
+      var accessToken = gapi.auth.getToken().access_token;
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+      xhr.onload = function() {
+        return xhr.responseText;
+      };
+      xhr.onerror = function() {
+        
+      };
+      xhr.send();
     }
     
     function deleteFile(fileId) {
