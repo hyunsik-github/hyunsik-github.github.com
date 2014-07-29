@@ -94,22 +94,42 @@
       }     
 
       if(isFind) {
-        executeWithDrive(getFileContent(item));
+        var setData = function (text) {
+          var json = JSON.parse(data);
+          for(var key in json) {
+            console.log(key + ":" + json[key]);
+          }
+        }
+        executeWithDrive(getFileContent(item, setData));
         
       } else {
         console.log('No Data File');
+        var createData = function () {
+          var metadata = {
+            'title': 'data.json',
+            'mimeType': 'application/json',
+            'parents': [{
+            'id': APPDATA
+            }]
+          };
+
+          var request = gapi.client.request({
+            'path': '/drive/v2/files',
+            'method': 'POST',
+            'params': {'uploadType': 'multipart'},
+            'body': JSON.stringify(metadata)
+          });
+          
+          request.execute(function(file) {
+            console.log('Data Created');
+            console.log(file);
+          });
+        }
         createData();
       }
     }
 
-    function setData(text) {
-      var json = JSON.parse(data);
-      for(var key in json) {
-        console.log(key + ":" + json[key]);
-      }
-    }
-    
-    function getFileContent(file, setData) {
+    function getFileContent(file, callback) {
       var url;
       if (file.downloadUrl) {
         url = file.downloadUrl;
@@ -122,7 +142,7 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
       xhr.open('GET', url);
       xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
       xhr.onload = function() {
-        setData(xhr.responseText);
+        callback(xhr.responseText);
       };
       xhr.onerror = function() {
         
@@ -135,30 +155,7 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
         'fileId': fileId
       });
       request.execute(function(resp) { });
-    }
-    
-    function createData() {         
-      var metadata = {
-        'title': 'data.json',
-        'mimeType': 'application/json',
-        'parents': [{
-        'id': APPDATA
-        }]
-      };
-
-      var request = gapi.client.request({
-        'path': '/drive/v2/files',
-        'method': 'POST',
-        'params': {'uploadType': 'multipart'},        
-        'body': JSON.stringify(metadata)
-      });
-      
-      request.execute(function(file) {
-        console.log('Data Created');
-        console.log(file);
-      });
-    }
-      
+    }    
     //check file in AppData
     // if no, make new one.
   </script>
