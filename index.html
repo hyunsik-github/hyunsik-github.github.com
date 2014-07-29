@@ -93,14 +93,13 @@
         }
       }     
 
-      if(isFind) {
-        var setData = function (response) {
-          var data = JSON.parse(response);
+      if(isFind) {        
+        executeWithDrive(getFileContent(item, function (data) {
+          // var data = JSON.parse(response);
           for(var key in data) {
             console.log(key + ":" + data[key]);
           }
-        }
-        executeWithDrive(getFileContent(item, setData));
+        }));
         
       } else {
         console.log('No Data File');
