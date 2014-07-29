@@ -94,10 +94,10 @@
       }     
 
       if(isFind) {
-        var setData = function (text) {
-          var json = JSON.parse(data);
-          for(var key in json) {
-            console.log(key + ":" + json[key]);
+        var setData = function (response) {
+          var data = JSON.parse(response);
+          for(var key in data) {
+            console.log(key + ":" + data[key]);
           }
         }
         executeWithDrive(getFileContent(item, setData));
