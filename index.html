@@ -95,7 +95,7 @@
 
       if(isFind) {
         var setData = function (response) {
-          var data = JSON.parse(response[0]);
+          var data = JSON.parse(response);
           for(var key in data) {
             console.log(key + ":" + data[key]);
           }
