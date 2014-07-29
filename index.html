@@ -94,18 +94,22 @@
       }     
 
       if(isFind) {
-        var data = executeWithDrive(getFileContent(item));
-        var json = JSON.parse(data);
-        for(var key in json) {
-          console.log(key + ":" + json[key]);
-        }
+        executeWithDrive(getFileContent(item));
+        
       } else {
         console.log('No Data File');
         createData();
       }
     }
+
+    function setData(text) {
+      var json = JSON.parse(data);
+      for(var key in json) {
+        console.log(key + ":" + json[key]);
+      }
+    }
     
-    function getFileContent(file) {
+    function getFileContent(file, setData) {
       var url;
       if (file.downloadUrl) {
         url = file.downloadUrl;
@@ -118,7 +122,7 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
       xhr.open('GET', url);
       xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
       xhr.onload = function() {
-        return xhr.responseText;
+        setData(xhr.responseText);
       };
       xhr.onerror = function() {
         
