@@ -93,7 +93,7 @@
           //}
         }
       }     
-      /****/updateFile(item, null);
+      /****/test();
       /*if(isFind) {        
         executeWithDrive(getFileContent(item, function (response) {
           var data = JSON.parse(response);
@@ -150,8 +150,8 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
       xhr.send();
     }
 
-    function updateFile(fileMetadata, callback) {
-    var a = 'testtest';
+    function test() {
+      var a = 'testtest';
     var ca = new Array(a.length);
     for(var i in ca) {
       ca[i] = a.charCodeAt(i);
@@ -160,9 +160,13 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
 
     var ba = new Uint8Array(ca);
     var fileData = new Blob([ba], {type: 'text/plain'});
+    request.execute(function(resp) {
+      updateFile('1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs', resp, fildData, null);
+    });
+    }
+
+    function updateFile(id, fileMetadata, data,  callback) {
     
-
-
 
 
 
@@ -191,7 +195,7 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
         close_delim;
 
     var request = gapi.client.request({
-        'path': '/upload/drive/v2/files/' + '1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs',
+        'path': '/upload/drive/v2/files/' + id,
         'method': 'PUT',
         'params': {'uploadType': 'multipart', 'alt': 'json'},
         'headers': {
