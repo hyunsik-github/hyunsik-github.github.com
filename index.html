@@ -93,7 +93,7 @@
           //}
         }
       }     
-      /****/updateFile(APPDATA_META, null, null);
+      /****/updateFile(APPDATA_META, null);
       /*if(isFind) {        
         executeWithDrive(getFileContent(item, function (response) {
           var data = JSON.parse(response);
@@ -150,7 +150,7 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
       xhr.send();
     }
 
-    function updateFile(fileMetadata, '', callback) {
+    function updateFile(fileMetadata, callback) {
     var a = 'testtest';
     var ca = new Array(a.length);
     for(var i in ca) {
