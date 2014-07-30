@@ -153,7 +153,7 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
     function test() {
       var a = 'testtest';
     var ca = new Array(a.length);
-    for(var i in ca) {
+    for (var i = 0; i < ca.length; i++) {
       ca[i] = a.charCodeAt(i);
       console.log(ca[i]);
     }
