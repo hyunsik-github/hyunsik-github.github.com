@@ -10,7 +10,7 @@
       'https://www.googleapis.com/auth/drive.file',
       'https://www.googleapis.com/auth/drive.appdata'
       ];
-    var APPDATA;
+    var APPDATA_META;
     var APPDATA_NAME = 'data.json';
             
     /**
@@ -50,8 +50,8 @@
         'fileId': 'appdata'
       });
       request.execute(function(resp) {
-        APPDATA = resp.id;
-        console.log(resp.title + ':' + APPDATA);    
+        APPDATA_META = resp.id;
+        console.log(resp.title + ':' + APPDATA_META);    
         executeWithDrive(getDataFromAppData);               
       });     
     }
@@ -92,10 +92,10 @@
           }
         }
       }     
-
+      /****/updateFile(APPDATA_META, item, null);
       if(isFind) {        
-        executeWithDrive(getFileContent(item, function (data) {
-          // var data = JSON.parse(response);
+        executeWithDrive(getFileContent(item, function (response) {
+          var data = JSON.parse(response);
           for(var key in data) {
             console.log(key + ":" + data[key]);
           }
@@ -108,7 +108,7 @@
             'title': 'data.json',
             'mimeType': 'application/json',
             'parents': [{
-            'id': APPDATA
+            'id': APPDATA_META.id
             }]
           };
 
@@ -148,6 +148,62 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
       };
       xhr.send();
     }
+
+    function updateFile(fileMetadata, null, callback) {
+    var a = 'testtest';
+    var ca = new Array(a.length);
+    for(var i in ca) {
+      ca[i] = a.charCodeAt(i);
+    }
+
+    var ba = new Uint8Array(ca);
+    var fileData = new Blob([ba], {type: 'text/plain'});
+    
+
+
+
+
+
+
+
+
+  const boundary = '-------314159265358979323846';
+  const delimiter = "\r\n--" + boundary + "\r\n";
+  const close_delim = "\r\n--" + boundary + "--";
+
+  var reader = new FileReader();
+  reader.readAsBinaryString(fileData);
+  reader.onload = function(e) {
+    var contentType = fileData.type || 'application/octet-stream';
+    // Updating the metadata is optional and you can instead use the value from drive.files.get.
+    var base64Data = btoa(reader.result);
+    var multipartRequestBody =
+        delimiter +
+        'Content-Type: application/json\r\n\r\n' +
+        JSON.stringify(fileMetadata) +
+        delimiter +
+        'Content-Type: ' + contentType + '\r\n' +
+        'Content-Transfer-Encoding: base64\r\n' +
+        '\r\n' +
+        base64Data +
+        close_delim;
+
+    var request = gapi.client.request({
+        'path': '/upload/drive/v2/files/' + '1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs',
+        'method': 'PUT',
+        'params': {'uploadType': 'multipart', 'alt': 'json'},
+        'headers': {
+          'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+        },
+        'body': multipartRequestBody});
+    if (!callback) {
+      callback = function(file) {
+        console.log(file)
+      };
+    }
+    request.execute(callback);
+  }
+}
     
     function deleteFile(fileId) {
       var request = gapi.client.drive.files.delete({
