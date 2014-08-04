@@ -28,7 +28,7 @@
   
       function showContent() {
       var when = document.getElementById('when');
-      when.innerHTML = "<lable onclick='addData(this)'>When: </label>";
+      when.innerHTML = "<lable onclick='addData(this)'>When: <input type='date' id='date' /></label>";
       when.innerHTML += "<input type='text' id='helpText'/>";
       document.getElementById('date').valueAsDate = new Date();        
       
