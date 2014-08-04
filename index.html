@@ -23,17 +23,23 @@
     var MEMBERS;
     var RESTAURANTS;
     var MEMU;
+
+    var LABEL_WHEN = "일시";
+    var LABEL_WHERE = "식당";
+    var LABEL_WHAT = "메뉴";
+    var LABEL_WHO_GROUP = "그룹";
+    var LABEL_WHO_MEMBER = "멤버";
     
     
   
       function showContent() {
       var when = document.getElementById('when');
-      when.innerHTML = "<lable onclick='addData(this)'>When: <input type='date' id='date' /></label>";
+      when.innerHTML = "<lable onclick='addData(this)'>" + LABEL_WHEN + ": <input type='date' id='date' /></label>";
       when.innerHTML += "<input type='text' id='helpText'/>";
       document.getElementById('date').valueAsDate = new Date();        
       
       var where = document.getElementById('where');
-      where.innerHTML += "<label onclick='addData(this)'>Where: </lable>"; 
+      where.innerHTML += "<label onclick='addData(this)'>" + LABEL_WHERE + ": </lable>"; 
       var what = document.getElementById('what');     
             
       var who = document.getElementById('who');
@@ -51,7 +57,7 @@
     function showMenu(restaurant) {
     var what = document.getElementById('what');
     var MENU = APPDATA[restaurant];
-    what.innerHTML = "<label onclick='addData(this)'>What: </lable>";
+    what.innerHTML = "<label onclick='addData(this)'>" + LABLE_WHAT + ": </lable>";
     for(var key in MENU) {
       what.innerHTML += "<input type='button' value='" + key + " (" + MENU[key] + "원)' id='" + restaurant + "_" + key + "' onclick='setMenu(this.value)'>"; 
     }
@@ -66,7 +72,7 @@
 
       function showGroup() {
     var who = document.getElementById('who'); 
-    who.innerHTML = "<label>Who:</lable><input type='button' value='+' onclick='addData(this)'>";          
+    who.innerHTML = "<label onclick='addData(this)'>" + LABLE_WHO_GROUP + ":</lable>";
     who.innerHTML += "<input type='button' value='All' id='all' onclick='showMember(this.value)'>";   
     for(var index in GROUPS) {
       who.innerHTML += "<input type='button' value='" + GROUPS[index] + "' id='" + GROUPS[index] + "' onclick='showMember(this.value)'>"; 
@@ -75,13 +81,14 @@
     
     function showMember(group) {
         var member = document.getElementById('member');   
+        member.innerHTML = "<label onclick='addData(this)'>" + LABLE_WHO_MEMBER + ":</lable>";
     var memberArray;
     if("All" == group) {
       memberArray = MEMBERS;
     } else {
       memberArray = APPDATA[group];
     }   
-    member.innerHTML = "<input type='button' value='+' onclick='addData(this)'>";
+    
         for(var index in memberArray) {
       member.innerHTML += "<input type='button' value='" + memberArray[index] + "' id='" + memberArray[index] + "'>"; 
     }
