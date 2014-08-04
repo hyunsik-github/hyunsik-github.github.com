@@ -24,22 +24,22 @@
     var RESTAURANTS;
     var MEMU;
 
-    var LABEL_WHEN = "일시";
-    var LABEL_WHERE = "식당";
-    var LABEL_WHAT = "메뉴";
-    var LABEL_WHO_GROUP = "그룹";
-    var LABEL_WHO_MEMBER = "멤버";
+    var LABLE_WHEN = "일시";
+    var LABLE_WHERE = "식당";
+    var LABLE_WHAT = "메뉴";
+    var LABLE_WHO_GROUP = "그룹";
+    var LABLE_WHO_MEMBER = "멤버";
     
     
   
       function showContent() {
       var when = document.getElementById('when');
-      when.innerHTML = "<lable onclick='addData(this)'>" + LABEL_WHEN + ": <input type='date' id='date' /></label>";
+      when.innerHTML = "<lable onclick='addData(this)'>" + LABLE_WHEN + ": <input type='date' id='date' /></label>";
       when.innerHTML += "<input type='text' id='helpText'/>";
       document.getElementById('date').valueAsDate = new Date();        
       
       var where = document.getElementById('where');
-      where.innerHTML += "<label onclick='addData(this)'>" + LABEL_WHERE + ": </lable>"; 
+      where.innerHTML += "<label onclick='addData(this)'>" + LABLE_WHERE + ": </lable>"; 
       var what = document.getElementById('what');     
             
       var who = document.getElementById('who');
