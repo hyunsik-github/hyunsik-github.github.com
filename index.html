@@ -61,7 +61,7 @@
       for(var key in MENU) {
         what.innerHTML += "<input type='button' value='" + key + " (" + MENU[key] + "원)' id='" + restaurant + "_" + key + "' onclick='setMenu(this.value)'>"; 
       }
-      document.getElementById('helpLable').value = "메뉴를 선택하세요";
+      document.getElementById('helpLable').innerHTML = "메뉴를 선택하세요";
       }
   
    function setMenu(menu) {
