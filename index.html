@@ -28,12 +28,12 @@
   
       function showContent() {
       var when = document.getElementById('when');
-      when.innerHTML = "<lable>When: <input type='date' id='date' /></label>";
-      when.innerHTML += "<input type='text' id='add'/>";
+      when.innerHTML = "<lable onclick='addData(this)'>When: </label>";
+      when.innerHTML += "<input type='text' id='helpText'/>";
       document.getElementById('date').valueAsDate = new Date();        
       
       var where = document.getElementById('where');
-      where.innerHTML += "<label>Where:</lable><input type='button' value='+' onclick='addData(this)'>"; 
+      where.innerHTML += "<label onclick='addData(this)'>Where: </lable>"; 
       var what = document.getElementById('what');     
             
       var who = document.getElementById('who');
@@ -51,7 +51,7 @@
     function showMenu(restaurant) {
     var what = document.getElementById('what');
     var MENU = APPDATA[restaurant];
-    what.innerHTML = "<label>What:</lable><input type='button' value='+' onclick='addData(this)'>";
+    what.innerHTML = "<label onclick='addData(this)'>What: </lable>";
     for(var key in MENU) {
       what.innerHTML += "<input type='button' value='" + key + " (" + MENU[key] + "원)' id='" + restaurant + "_" + key + "' onclick='setMenu(this.value)'>"; 
     }
@@ -87,11 +87,14 @@
     }
       }
 
-      function addData(toggle) {  
+      function addData(toggle) {
+        var helpText = document.getElementById('helpText');        
         if(toggle.value == "+") {
           toggle.value = "-";  
+          helpText.value = "add";
         } else {
           toggle.value = "+";  
+          helpText.value = "remove";
         }
         
         //value.innerHTML += "<input type='text'>";
