@@ -3,26 +3,89 @@
 <head>
     <title>Discover Drive</title> 
   
-    <script type="text/javascript">
-      window.onload = function() {
-        document.getElementById('date').valueAsDate = new Date();        
-      }
-
-
-      function addGroup(groupName, groupId) {
-        var who = document.getElementById('who');
-        who.innerHTML += "<input type='button' value='" + group + "' id="' + id "'>";
-      }
-      
+    <script type="text/javascript">      
     var CLIENT_ID="1003542821097-ch60bub61oa3gq84p7gv3d90std7bq1j.apps.googleusercontent.com";
     var SCOPES=[
       'https://www.googleapis.com/auth/drive',
       'https://www.googleapis.com/auth/drive.file',
       'https://www.googleapis.com/auth/drive.appdata'
       ];
-    var APPDATA_META;
+    
     var APPDATA_NAME = 'data.json';
+    var APPDATA_META;
+    var APPDATA;
+    
+    var GROUP="Group";
+    var MEMBER="Member";
+    var RESTAURANT="Restaurant";
+    
+    var GROUPS;
+    var MEMBERS;
+    var RESTAURANTS;
+    var MEMU;
+    
+    
+  
+      function showContent() {
+      var when = document.getElementById('when');
+      when.innerHTML = "<lable>When: <input type='date' id='date' /></label>";
+      document.getElementById('date').valueAsDate = new Date();        
+      
+      var where = document.getElementById('where');
+      where.innerHTML += "<label>Where:</lable>"; 
+      var what = document.getElementById('what');     
             
+      var who = document.getElementById('who');
+      
+      showRestaurant();           
+      }
+    
+    function showRestaurant() {
+    var where = document.getElementById('where');   
+    for(var index in RESTAURANTS) {
+      where.innerHTML += "<input type='button' value='" + RESTAURANTS[index] + "' id='" + RESTAURANTS[index] + "' onclick='showMenu(this.value)'>"; 
+    }
+      }
+    
+    function showMenu(restaurant) {
+    var what = document.getElementById('what');   
+    var MENU = APPDATA[restaurant];
+    what.innerHTML = "<label>What:</lable>";
+    for(var key in MENU) {
+      what.innerHTML += "<input type='button' value='" + key + " (" + MENU[key] + "원)' id='" + restaurant + "_" + key + "' onclick='setMenu(this.value)'>"; 
+    }
+      }
+  
+   function setMenu(menu) {
+    var result = document.getElementById('result');   
+    result.innerHTML += menu;
+    showGroup();    
+   }
+
+
+      function showGroup() {
+    var who = document.getElementById('who'); 
+    who.innerHTML = "<label>Who:</lable>";          
+    who.innerHTML += "<input type='button' value='All' id='all' onclick='showMember(this.value)'>";   
+    for(var index in GROUPS) {
+      who.innerHTML += "<input type='button' value='" + GROUPS[index] + "' id='" + GROUPS[index] + "' onclick='showMember(this.value)'>"; 
+    }
+      }
+    
+    function showMember(group) {
+        var member = document.getElementById('member');   
+    var memberArray;
+    if("All" == group) {
+      memberArray = MEMBERS;
+    } else {
+      memberArray = APPDATA[group];
+    }   
+    member.innerHTML = "";
+        for(var index in memberArray) {
+      member.innerHTML += "<input type='button' value='" + memberArray[index] + "' id='" + memberArray[index] + "'>"; 
+    }
+      }
+
     /**
     * Called when the client library is loaded.
     */  
@@ -106,11 +169,20 @@
       
       if(isFind) {        
         executeWithDrive(getFileContent(item, function (response) {
-          var data = JSON.parse(response);
-          for(var key in data) {      
-            console.log(key + ":" + data[key]);     
+          APPDATA = JSON.parse(response);
+          for(var key in APPDATA) {   
+      if(GROUP == key) {
+        GROUPS = APPDATA[key];
+      } else if(MEMBER == key) {
+        MEMBERS = APPDATA[key];
+      } else if(RESTAURANT == key) {
+        RESTAURANTS = APPDATA[key];
+      }
+      
+            console.log(key + ":" + APPDATA[key]);     
           }
-        }));
+      showContent();
+        }));    
       } else {
         console.log('No Data File');
         var createData = function () {
@@ -222,21 +294,16 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
     //check file in AppData
     // if no, make new one.
   </script>
-  <!--<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>-->
+  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 </head>
 <body>
 <!--<div class="g-savetodrive" data-src="http://pagead2.googlesyndication.com/simgad/14610098017098633517" data-filename="test.jpg" data-sitename="testSite"></div>-->
-<div id="when">
-    <lable>Date: <input type="date" id="date" /></label>
-</div>
-<div id="who">
-    <label>MEMBER:</lable>
-</div>
+<div id="when"></div>
 <div id="where"></div>
 <div id="what"></div>
 
-<!--<div id="divbutton1">
-        <button onclick="printApplicationDataFolderMetadata()">Click</button>
-</div>-->
+<div id="who"></div>
+<div id="member"></div>
+<div id="result"></div>
 </body>
 </html>
