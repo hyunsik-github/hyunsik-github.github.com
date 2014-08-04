@@ -33,7 +33,7 @@
       document.getElementById('date').valueAsDate = new Date();        
       
       var where = document.getElementById('where');
-      where.innerHTML += "<label>Where:</lable><input type='button' value='+' onclick='addData(where)'>"; 
+      where.innerHTML += "<label>Where:</lable><input type='button' value='+' onclick='addData(this)'>"; 
       var what = document.getElementById('what');     
             
       var who = document.getElementById('who');
@@ -51,7 +51,7 @@
     function showMenu(restaurant) {
     var what = document.getElementById('what');
     var MENU = APPDATA[restaurant];
-    what.innerHTML = "<label>What:</lable><input type='button' value='+' onclick='addData(what)'>";
+    what.innerHTML = "<label>What:</lable><input type='button' value='+' onclick='addData(this)'>";
     for(var key in MENU) {
       what.innerHTML += "<input type='button' value='" + key + " (" + MENU[key] + "원)' id='" + restaurant + "_" + key + "' onclick='setMenu(this.value)'>"; 
     }
@@ -66,7 +66,7 @@
 
       function showGroup() {
     var who = document.getElementById('who'); 
-    who.innerHTML = "<label>Who:</lable><input type='button' value='+' onclick='addData(who)'>";          
+    who.innerHTML = "<label>Who:</lable><input type='button' value='+' onclick='addData(this)'>";          
     who.innerHTML += "<input type='button' value='All' id='all' onclick='showMember(this.value)'>";   
     for(var index in GROUPS) {
       who.innerHTML += "<input type='button' value='" + GROUPS[index] + "' id='" + GROUPS[index] + "' onclick='showMember(this.value)'>"; 
@@ -81,7 +81,7 @@
     } else {
       memberArray = APPDATA[group];
     }   
-    member.innerHTML = "<input type='button' value='+' onclick='addData(member)'>";
+    member.innerHTML = "<input type='button' value='+' onclick='addData(this)'>";
         for(var index in memberArray) {
       member.innerHTML += "<input type='button' value='" + memberArray[index] + "' id='" + memberArray[index] + "'>"; 
     }
