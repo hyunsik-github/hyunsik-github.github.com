@@ -34,13 +34,23 @@
     var HELP_SELECT_WHAT="메뉴를 선택하세요";
     var HELP_SELECT_WHO_GROUP="그룹을 선택하세요";
     var HELP_SELECT_WHO_MEMBER="멤버를 선택하세요";
+
+    var ADD_WHERE="추가할 식당을 입력하세요";
+    var ADD_WHAT="추가할 메뉴를 입력하세요";
+    var ADD_WHO_GROUP="추가할 그룹을 입력하세요";
+    var ADD_WHO_MEMBER="추가할 멤버를 입력하세요";
+
+    var REMOVE_WHERE="삭제할 식당을 선택하세요";
+    var REMOVE_WHAT="삭제할 메뉴를 선택하세요";
+    var REMOVE_WHO_GROUP="삭제할 그룹을 선택하세요";
+    var REMOVE_WHO_MEMBER="삭제할 멤버를 선택하세요";
     
     
   
       function showContent() {
       var when = document.getElementById('when');
       when.innerHTML = "<lable onclick='addData(this)'>" + LABLE_WHEN + ": <input type='date' id='date' /></label>";
-      when.innerHTML += "<input type='text' id='helpText'/>";
+      when.innerHTML += "<input type='text' id='userInput'/>";
       document.getElementById('date').valueAsDate = new Date();        
       
       var where = document.getElementById('where');
@@ -104,17 +114,14 @@
     }
 
       function addData(toggle) {
-        var helpText = document.getElementById('helpText');        
+        var helpText = document.getElementById('helpLable');        
         if(toggle.value == "+") {
           toggle.value = "-";  
-          helpText.value = "add";
+          document.getElementById('helpLable').innerHTML = HELP_SELECT_WHO_MEMBER;
         } else {
           toggle.value = "+";  
-          helpText.value = "remove";
+          document.getElementById('helpLable').innerHTML = HELP_SELECT_WHO_MEMBER;
         }
-        
-        //value.innerHTML += "<input type='text'>";
-
       }
 
     /**
