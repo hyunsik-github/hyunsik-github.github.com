@@ -48,7 +48,7 @@
       }
     
     function showMenu(restaurant) {
-    var what = document.getElementById('what');   
+    var what = document.getElementById('what');
     var MENU = APPDATA[restaurant];
     what.innerHTML = "<label>What:</lable><input type='button' value='+' onclick='addData(what)'>";
     for(var key in MENU) {
@@ -86,8 +86,10 @@
     }
       }
 
-      function add() {
-        
+      function addData(value) {
+        var element = document.getElementById('value');
+        element.innerHTML= "<input type='text'>";
+
       }
 
     /**
