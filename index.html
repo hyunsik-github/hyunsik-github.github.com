@@ -29,6 +29,11 @@
     var LABLE_WHAT = "메뉴";
     var LABLE_WHO_GROUP = "그룹";
     var LABLE_WHO_MEMBER = "멤버";
+
+    var HELP_SELECT_WHERE="식당을 선택하세요";
+    var HELP_SELECT_WHAT="메뉴를 선택하세요";
+    var HELP_SELECT_WHO_GROUP="그룹을 선택하세요";
+    var HELP_SELECT_WHO_MEMBER="멤버를 선택하세요";
     
     
   
@@ -48,11 +53,12 @@
       }
     
     function showRestaurant() {
-    var where = document.getElementById('where');   
-    for(var index in RESTAURANTS) {
-      where.innerHTML += "<input type='button' value='" + RESTAURANTS[index] + "' id='" + RESTAURANTS[index] + "' onclick='showMenu(this.value)'>"; 
-    }
+      var where = document.getElementById('where');   
+      for(var index in RESTAURANTS) {
+        where.innerHTML += "<input type='button' value='" + RESTAURANTS[index] + "' id='" + RESTAURANTS[index] + "' onclick='showMenu(this.value)'>"; 
       }
+      document.getElementById('helpLable').innerHTML = HELP_SELECT_WHERE;
+    }
     
     function showMenu(restaurant) {
       var what = document.getElementById('what');
@@ -61,7 +67,7 @@
       for(var key in MENU) {
         what.innerHTML += "<input type='button' value='" + key + " (" + MENU[key] + "원)' id='" + restaurant + "_" + key + "' onclick='setMenu(this.value)'>"; 
       }
-      document.getElementById('helpLable').innerHTML = "메뉴를 선택하세요";
+      document.getElementById('helpLable').innerHTML = HELP_SELECT_WHAT;
       }
   
    function setMenu(menu) {
@@ -71,29 +77,31 @@
    }
 
 
-      function showGroup() {
-    var who = document.getElementById('who'); 
-    who.innerHTML = "<label onclick='addData(this)'>" + LABLE_WHO_GROUP + ":</lable>";
-    who.innerHTML += "<input type='button' value='All' id='all' onclick='showMember(this.value)'>";   
-    for(var index in GROUPS) {
-      who.innerHTML += "<input type='button' value='" + GROUPS[index] + "' id='" + GROUPS[index] + "' onclick='showMember(this.value)'>"; 
-    }
+    function showGroup() {
+      var who = document.getElementById('who'); 
+      who.innerHTML = "<label onclick='addData(this)'>" + LABLE_WHO_GROUP + ":</lable>";
+      who.innerHTML += "<input type='button' value='All' id='all' onclick='showMember(this.value)'>";   
+      for(var index in GROUPS) {
+        who.innerHTML += "<input type='button' value='" + GROUPS[index] + "' id='" + GROUPS[index] + "' onclick='showMember(this.value)'>"; 
+        document.getElementById('helpLable').innerHTML = HELP_SELECT_WHO_GROUP;
       }
+    }
     
     function showMember(group) {
-        var member = document.getElementById('member');   
-        member.innerHTML = "<label onclick='addData(this)'>" + LABLE_WHO_MEMBER + ":</lable>";
-    var memberArray;
-    if("All" == group) {
-      memberArray = MEMBERS;
-    } else {
-      memberArray = APPDATA[group];
-    }   
-    
-        for(var index in memberArray) {
-      member.innerHTML += "<input type='button' value='" + memberArray[index] + "' id='" + memberArray[index] + "'>"; 
-    }
+      var member = document.getElementById('member');   
+      member.innerHTML = "<label onclick='addData(this)'>" + LABLE_WHO_MEMBER + ":</lable>";
+      var memberArray;
+      if("All" == group) {
+        memberArray = MEMBERS;
+      } else {
+        memberArray = APPDATA[group];
       }
+    
+      for(var index in memberArray) {
+        member.innerHTML += "<input type='button' value='" + memberArray[index] + "' id='" + memberArray[index] + "'>"; 
+      }
+    document.getElementById('helpLable').innerHTML = HELP_SELECT_WHO_MEMBER;
+    }
 
       function addData(toggle) {
         var helpText = document.getElementById('helpText');        
@@ -321,7 +329,7 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
 </head>
 <body>
 <div id="helpArea">
-  <lable id="helpLable"></lable>
+  <lable id="helpLable" value="  "></lable>
 </div>
 <div id="when"></div>
 <div id="where"></div>
