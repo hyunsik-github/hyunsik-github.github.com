@@ -20,7 +20,7 @@
 		document.getElementById('date').valueAsDate = new Date();
       
 		var where = document.getElementById('where');
-		where.innerHTML += "<label onclick='addData(this)'>" + LABEL_WHERE + ": </label>"; 
+		where.innerHTML += "<label value='" + LABEL_WHERE + "' onclick='addData(this)'>" + LABEL_WHERE + ": </label>"; 
 		
 		var what = document.getElementById('what');
 		var who = document.getElementById('who');
