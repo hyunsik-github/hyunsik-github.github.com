@@ -148,7 +148,7 @@
         } else {
          	flag[doc.id] = "+";  
 			doc.innerHTML += "<input type='text' id='input" + doc.id + "'>";
-    	    doc.innerHTML += "<input type='button' id='confirm'" + doc.id + "' value='확인'>";
+    	    doc.innerHTML += "<input type='button' id='confirm" + doc.id + "' value='확인'>";
         }
 	}
 	
