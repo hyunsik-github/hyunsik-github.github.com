@@ -11,6 +11,7 @@
 	var selectedMenu;
 	
 	var data;
+	var flag
 		
 	function showContent() {
 		data = {};
@@ -140,7 +141,7 @@
         } else {
          	element.value = "+";  
 			doc.innerHTML += "<input type='text' id='input" + doc.value + "'>";
-    	    doc.innerHTML += "<input type='button' value='확인'>";
+    	    doc.innerHTML += "<input type='button' id='confirm'" + doc.value + "'' value='확인'>";
         }
 	}
 	
