@@ -11,7 +11,12 @@
 	var selectedMenu;
 	
 	var data;
-	var flag
+	var flag = {
+		"where" : "",
+		"what" : "",
+		"who" : "",
+		"member" : ""
+	};
 		
 	function showContent() {
 		data = {};
@@ -20,7 +25,7 @@
 		document.getElementById('date').valueAsDate = new Date();
       
 		var where = document.getElementById('where');
-		where.innerHTML += "<label value='" + LABEL_WHERE + "' onclick='addData(this)'>" + LABEL_WHERE + ": </label>"; 
+		where.innerHTML += "<label onclick='addData(this)'>" + LABEL_WHERE + ": </label>"; 
 		
 		var what = document.getElementById('what');
 		var who = document.getElementById('who');
@@ -134,14 +139,16 @@
 
 	function addData(element) {
         var doc = element.parentElement;
-        if(element.value == "+") {
-			element.value = "-";  
-			var child = document.getElementById('input'+doc.value);
+        if(flag[doc.id] == "+") {
+			flag[doc.id] = "-";  
+			var child = document.getElementById('input'+doc.id);
+			doc.removeChild(child);
+			child = document.getElementById('confirm'+doc.id);
 			doc.removeChild(child);
         } else {
-         	element.value = "+";  
-			doc.innerHTML += "<input type='text' id='input" + doc.value + "'>";
-    	    doc.innerHTML += "<input type='button' id='confirm'" + doc.value + "'' value='확인'>";
+         	flag[doc.id] = "+";  
+			doc.innerHTML += "<input type='text' id='input" + doc.id + "'>";
+    	    doc.innerHTML += "<input type='button' id='confirm'" + doc.id + "' value='확인'>";
         }
 	}
 	
