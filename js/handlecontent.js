@@ -131,14 +131,16 @@
 		}
 	}
 
-	function addData(toggle) {
-        var helpText = document.getElementById('helpLabel');
-        if(toggle.value == "+") {
-			toggle.value = "-";  
-			document.getElementById('helpLabel').innerHTML = MSG_SELECT_WHO_MEMBER;
+	function addData(element) {
+        var doc = element.parentElement;
+        if(element.value == "+") {
+			element.value = "-";  
+			var child = document.getElementById('input'+doc.value);
+			doc.removeChild(child);
         } else {
-          toggle.value = "+";  
-          document.getElementById('helpLabel').innerHTML = MSG_SELECT_WHO_MEMBER;
+         	element.value = "+";  
+			doc.innerHTML += "<input type='text' id='input" + doc.value + "'>";
+    	    doc.innerHTML += "<input type='button' value='확인'>";
         }
 	}
 	
