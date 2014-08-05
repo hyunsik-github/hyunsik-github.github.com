@@ -151,7 +151,7 @@
 				result.innerHTML += data[RESTAURANT] + " : ";
 				result.innerHTML += "[" + key + " : " + menus[key] + "원] - ";		
 				
-				var memberArr = data[selectedMenu];
+				var memberArr = data[key];
 				
 				for(var i in memberArr) {
 					result.innerHTML += " " + memberArr[i];
