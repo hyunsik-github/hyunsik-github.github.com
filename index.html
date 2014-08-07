@@ -1,213 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Discover Drive</title>	
-	
+    <title>Show me the Money</title> 
+  
+  <script src="js/handlegapi.js" charset="utf-8"></script>
+  <script src="js/handlecontent.js" charset="utf-8"></script>
+  <script src="js/messages.js" charset="utf-8"></script>
     <script type="text/javascript">
-		var CLIENT_ID="1003542821097-6459g4dgnglvat9mqu5ihniodtqlvbqn.apps.googleusercontent.com";
-		var SCOPES=[
-      'https://www.googleapis.com/auth/drive',
-      'https://www.googleapis.com/auth/drive.file',
-      'https://www.googleapis.com/auth/drive.appdata'
-      ];
-    var APPDATA_META;
-    var APPDATA_NAME = 'data.json';
-            
-    /**
-    * Called when the client library is loaded.
-    */  
-    function handleClientLoad() {
-      checkAuth();
-    }
     
-    function checkAuth() {
-      gapi.auth.authorize(
-        {'client_id': CLIENT_ID, 'scope' : SCOPES.join(' '), 'immediate': false}, 
-        handleAuthResult
-      );
-    }
-
-    function handleAuthResult(authResult) {
-      if (authResult) {
-        // Access token has been successfully retrieved, requests can be sent to the API
-        executeWithDrive(getAppData);       
-        //listFilesInApplicationDataFolder(checkApplicationDataFile);           
-        //createApplicationDataFile();        
-      } else {
-        // No access token could be retrieved, force the authorization flow.
-        gapi.auth.authorize(
-          {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false},
-          handleAuthResult);
-      }
-    }
     
-    function executeWithDrive(callback) {     
-      gapi.client.load('drive', 'v2', callback);
-    }
-      
-    function getAppData() {     
-      var request = gapi.client.drive.files.get({
-        'fileId': 'appdata'
-      });
-      request.execute(function(resp) {
-        APPDATA_META = resp;
-        console.log(resp.title + ':' + APPDATA_META.id);
-        executeWithDrive(getDataFromAppData);               
-      });     
-    }
-    
-    function getDataFromAppData() {     
-      var retrievePageOfFiles = function(request, result) {
-        request.execute(function(resp) {
-          result = result.concat(resp.items);
-          var nextPageToken = resp.nextPageToken;
-          if (nextPageToken) {
-            request = gapi.client.drive.files.list({
-              'pageToken': nextPageToken
-            });
-            retrievePageOfFiles(request, result);
-          } else {
-            checkData(result);
-          }
-        });
-      }
-      var query = '\'appdata\' in parents and title = \'' + APPDATA_NAME + '\'';
-      var listRequest = gapi.client.drive.files.list({        
-        'q': query        
-        
-      });
-      retrievePageOfFiles(listRequest, []);     
-    }
-    
-    function checkData(result) {
-      var isFind = false;
-      var item;
-      for(var index in result) {
-        item = result[index];
-        if(typeof (item) != 'undefined') {          
-          if(item.title == APPDATA_NAME) {
-            console.log('Data Exist');
-            isFind = true;
-            break;
-          }
-        }
-      }     
-
-      if(isFind) {        
-	  //TODO
-	  updateFile(APPDATA_META, item, null);
-        executeWithDrive(getFileContent(item, function (response) {
-          var data = JSON.parse(response);
-          for(var key in data) {
-            console.log(key + ":" + data[key]);
-          }
-        }));
-        
-      } else {
-        console.log('No Data File');
-        var createData = function () {
-          var metadata = {
-            'title': 'data.json',
-            'mimeType': 'application/json',
-            'parents': [{
-            'id': APPDATA_META.id
-            }]
-          };
-
-          var request = gapi.client.request({
-            'path': '/drive/v2/files',
-            'method': 'POST',
-            'params': {'uploadType': 'multipart'},
-            'body': JSON.stringify(metadata)
-          });
-          
-          request.execute(function(file) {
-            console.log('Data Created');
-            console.log(file);
-          });
-        }
-        createData();
-      }
-    }
-
-    function getFileContent(file, callback) {
-      var url;
-      if (file.downloadUrl) {
-        url = file.downloadUrl;
-      } else if (file.exportLinks){
-        url = file['exportLinks']['text/plain'];
-      }
-	//TODO:
-url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs&exportFormat=txt';
-      var accessToken = gapi.auth.getToken().access_token;
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url);
-      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-      xhr.onload = function() {
-        callback(xhr.responseText);
-      };
-      xhr.onerror = function() {
-        
-      };
-      xhr.send();
-    }
-	//TODO:
-	function updateFile(fileMetadata, null, callback) {
-    var a = 'testtest';
-    var ca = new Array(a.length);
-    for(var i in ca) {
-      ca[i] = a.charCodeAt(i);
-    }
-
-    var ba = new Uint8Array(ca);
-    var fileData = new Blob([ba], {type: 'text/plain'});
-    
-
-
-
-
-
-
-
-
-  const boundary = '-------314159265358979323846';
-  const delimiter = "\r\n--" + boundary + "\r\n";
-  const close_delim = "\r\n--" + boundary + "--";
-
-  var reader = new FileReader();
-  reader.readAsBinaryString(fileData);
-  reader.onload = function(e) {
-    var contentType = fileData.type || 'application/octet-stream';
-    // Updating the metadata is optional and you can instead use the value from drive.files.get.
-    var base64Data = btoa(reader.result);
-    var multipartRequestBody =
-        delimiter +
-        'Content-Type: application/json\r\n\r\n' +
-        JSON.stringify(fileMetadata) +
-        delimiter +
-        'Content-Type: ' + contentType + '\r\n' +
-        'Content-Transfer-Encoding: base64\r\n' +
-        '\r\n' +
-        base64Data +
-        close_delim;
-
-    var request = gapi.client.request({
-        'path': '/upload/drive/v2/files/' + '1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs',
-        'method': 'PUT',
-        'params': {'uploadType': 'multipart', 'alt': 'json'},
-        'headers': {
-          'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-        },
-        'body': multipartRequestBody});
-    if (!callback) {
-      callback = function(file) {
-        console.log(file)
-      };
-    }
-    request.execute(callback);
-  }
-}
-    
+ 
+  //TODO: test method
     function deleteFile(fileId) {
       var request = gapi.client.drive.files.delete({
         'fileId': fileId
@@ -217,12 +20,18 @@ url = 'https://docs.google.com/feeds/download/documents/export/Export?id=1q9-dUZ
     //check file in AppData
     // if no, make new one.
   </script>
-  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>    
+  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 </head>
 <body>
-<!--<div class="g-savetodrive" data-src="http://pagead2.googlesyndication.com/simgad/14610098017098633517" data-filename="test.jpg" data-sitename="testSite"></div>-->
-<div id="divbutton1">
-        <button onclick="printApplicationDataFolderMetadata()">Click</button>
+<div id="div_help">
+  <label id="div_help_label" value="  "></label>  
 </div>
+<div id="div_when" class="when"></div>
+<div id="div_where" class="where"></div>
+<div id="div_what" class="what"></div>
+
+<div id="div_whog" class="whog"></div>
+<div id="div_whom" class="whom"></div>
+<div id="result"></div>
 </body>
 </html>
