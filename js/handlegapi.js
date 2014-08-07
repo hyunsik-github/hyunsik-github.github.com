@@ -85,46 +85,46 @@
 			}
 		}     
       
-	if(isFind) {        
-        getFileContent(item, function (response) {
-			APPDATA = JSON.parse(response);
-			for(var key in APPDATA) {   
-				if(GROUP == key) {
-					groups = APPDATA[key];
-				} else if(MEMBER == key) {
-					members = APPDATA[key];
-				} else if(RESTAURANT == key) {
-					restaurants = APPDATA[key];
+		if(isFind) {        
+			getFileContent(item, function (response) {
+				APPDATA = JSON.parse(response);
+				for(var key in APPDATA) {   
+					if(WHOG == key) {
+						groups = APPDATA[key];
+					} else if(WHOM == key) {
+						members = APPDATA[key];
+					} else if(WHERE == key) {
+						restaurants = APPDATA[key];
+					}
+					//console.log(key + ":" + APPDATA[key]);
 				}
-				//console.log(key + ":" + APPDATA[key]);
-			}
-			showContent();
-		});    
-	} else {
-        console.log('No Data File');
-        var createData = function () {
-			var metadata = {
-				'title': 'data.json',
-				'mimeType': 'application/json',
-				'parents': [{
-				'id': APPDATA_META.id
-				}]
-			};
+				showContent();
+			});    
+		} else {
+			console.log('No Data File');
+			var createData = function () {
+				var metadata = {
+					'title': 'data.json',
+					'mimeType': 'application/json',
+					'parents': [{
+					'id': APPDATA_META.id
+					}]
+				};
 
-			var request = gapi.client.request({
-				'path': '/drive/v2/files',
-				'method': 'POST',
-				'params': {'uploadType': 'multipart'},
-				'body': JSON.stringify(metadata)
-			});
-          
-			request.execute(function(file) {
-				console.log('Data Created');
-				console.log(file);
-			});
-        }
+				var request = gapi.client.request({
+					'path': '/drive/v2/files',
+					'method': 'POST',
+					'params': {'uploadType': 'multipart'},
+					'body': JSON.stringify(metadata)
+				});
+			  
+				request.execute(function(file) {
+					console.log('Data Created');
+					console.log(file);
+				});
+			}
         createData();
-      }
+		}
     }
 	
 	function getFileContent(file, callback) {
@@ -149,31 +149,37 @@
     }
 	
 	function writeData(fileId, data) {  
+		//TODO: remove
+		fileId = '1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs';
+		
 		var content = new Array(data.length);
 		for (var i = 0; i < content.length; i++) {
 			content[i] = data.charCodeAt(i);
-			console.log(ca[i]);
-		}
-
+		}		
 		var byteArray = new Uint8Array(content);
 		var blob = new Blob([byteArray], {type: 'text/plain'});
+		
 		var request = gapi.client.drive.files.get({'fileId': '1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs'});
 		request.execute(function(resp) {
 			updateFile('1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs', resp, blob, null);
 		});
     }
 	
-	function updateFile(fileId, fileMetadata, blob,  callback) {
+	function updateFile(fileId, fileMetadata, fileData,  callback) {
 		const boundary = '-------314159265358979323846';
 		const delimiter = "\r\n--" + boundary + "\r\n";
-		const close_delim = "\r\n--" + boundary + "--";
+		const close_delim = "\r\n--" + boundary + "--";		
 
 		var reader = new FileReader();
-		reader.readAsBinaryString(fileData);
+		reader.readAsArrayBuffer(fileData);
 		reader.onload = function(e) {
+			
 			var contentType = fileData.type || 'application/octet-stream';
 			// Updating the metadata is optional and you can instead use the value from drive.files.get.
-			var base64Data = btoa(reader.result);
+			var base64Data = btoa(reader.result);			
+
+			console.log(base64Data);
+			
 			var multipartRequestBody =
 				delimiter +
 				'Content-Type: application/json\r\n\r\n' +
@@ -186,7 +192,7 @@
 				close_delim;
 
 			var request = gapi.client.request({
-				'path': '/upload/drive/v2/files/' + id,
+				'path': '/upload/drive/v2/files/' + fileId,
 				'method': 'PUT',
 				'params': {'uploadType': 'multipart', 'alt': 'json'},
 				'headers': {
@@ -200,4 +206,3 @@
 			}
 			request.execute(callback);
 		}
-    }
