@@ -32,7 +32,7 @@
     
     function showRestaurant() {
     	var dWhere = document.getElementById('div_where');
-		dWhere.innerHTML += "<label onclick='showDataInput(this, showMenu)'>" + LABEL_WHERE + ": </label>"; 
+		dWhere.innerHTML += "<label onclick='showDataInput(this, showMenu())'>" + LABEL_WHERE + ": </label>"; 
 
     	if(restaurants == null) {
 			showDataInput(dWhere, showMenu);
