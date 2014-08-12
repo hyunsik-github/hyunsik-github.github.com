@@ -152,58 +152,46 @@
 		//TODO: remove
 		fileId = '1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs';
 		
-		var content = new Array(data.length);
-		for (var i = 0; i < content.length; i++) {
-			content[i] = data.charCodeAt(i);
-		}		
-		var byteArray = new Uint8Array(content);
-		var blob = new Blob([byteArray], {type: 'text/plain'});
-		
 		var request = gapi.client.drive.files.get({'fileId': '1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs'});
 		request.execute(function(resp) {
-			updateFile('1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs', resp, blob, null);
+			updateFile('1q9-dUZ21i5xPLLBOHxPoteKhdpdtKEJKz6dxIF9peBs', resp, data, null);
 		});
     }
 	
-	function updateFile(fileId, fileMetadata, fileData,  callback) {
+	function updateFile(fileId, fileMetadata, data,  callback) {
 		const boundary = '-------314159265358979323846';
 		const delimiter = "\r\n--" + boundary + "\r\n";
 		const close_delim = "\r\n--" + boundary + "--";		
 
-		var reader = new FileReader();
-		reader.readAsArrayBuffer(fileData);
-		reader.onload = function(e) {
+		var contentType = 'application/octet-stream';
 			
-			var contentType = fileData.type || 'application/octet-stream';
-			// Updating the metadata is optional and you can instead use the value from drive.files.get.
-			var base64Data = btoa(reader.result);			
-
-			console.log(base64Data);
+		base64Data = Base64.encode(data);
+		
 			
-			var multipartRequestBody =
-				delimiter +
-				'Content-Type: application/json\r\n\r\n' +
-				JSON.stringify(fileMetadata) +
-				delimiter +
-				'Content-Type: ' + contentType + '\r\n' +
-				'Content-Transfer-Encoding: base64\r\n' +
-				'\r\n' +
-				base64Data +
-				close_delim;
+		var multipartRequestBody =
+			delimiter +
+			'Content-Type: application/json; charest=utf-8\r\n\r\n' +
+			JSON.stringify(fileMetadata) +
+			delimiter +
+			//'Content-Type: ' + contentType + '; charest=utf-8\r\n' +
+			'Content-Transfer-Encoding: base64\r\n' +
+			'\r\n' +
+			base64Data +
+			close_delim;
 
-			var request = gapi.client.request({
-				'path': '/upload/drive/v2/files/' + fileId,
-				'method': 'PUT',
-				'params': {'uploadType': 'multipart', 'alt': 'json'},
-				'headers': {
-					'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-				},
-				'body': multipartRequestBody});
-			if (!callback) {
-				callback = function(file) {
-					console.log(file)
-				};
-			}
-			request.execute(callback);
+		var request = gapi.client.request({
+			'path': '/upload/drive/v2/files/' + fileId,
+			'method': 'PUT',
+			'params': {'uploadType': 'multipart', 'alt': 'json'},
+			'headers': {
+				'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+			},
+			'body': multipartRequestBody});
+			
+		if (!callback) {
+			callback = function(file) {
+				console.log(file)
+			};
 		}
-	}
+		request.execute(callback);
+    }
