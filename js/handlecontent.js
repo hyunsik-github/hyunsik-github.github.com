@@ -34,7 +34,7 @@
     	var dWhere = document.getElementById('div_where');
 		dWhere.innerHTML += "<label onclick='showDataInput(this, showMenu)'>" + LABEL_WHERE + ": </label>"; 
 
-    	if(restaurant == null) {
+    	if(restaurants == null) {
 			showDataInput(dWhere, showMenu);
 		} else {
 			for(var index in restaurants) {
