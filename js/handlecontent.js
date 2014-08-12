@@ -24,35 +24,45 @@
 		dWhen.innerHTML = "<label onclick='showDataInput(this)'>" + LABEL_WHEN + ": <input type='date' id='date' /></label>";      
 		document.getElementById('date').valueAsDate = new Date();
       
-		var dWhere = document.getElementById('div_where');
-		dWhere.innerHTML += "<label onclick='showDataInput(this)'>" + LABEL_WHERE + ": </label>"; 
-		
-		//var what = document.getElementById('div_what');
-		//var who = document.getElementById('div_who');
+		//var dWhere = document.getElementById('div_where');
+		//dWhere.innerHTML += "<label onclick='showDataInput(this)'>" + LABEL_WHERE + ": </label>"; 
 		
 		showRestaurant();
 	}
     
     function showRestaurant() {
-		var dWhere = document.getElementById('div_where');   
-		for(var index in restaurants) {
-			dWhere.innerHTML += "<input type='button' value='" + restaurants[index] + "' id='" + restaurants[index] + "' onclick='showMenu(this.value)'>"; 
-		}
+    	var dWhere = document.getElementById('div_where');
+		dWhere.innerHTML += "<label onclick='showDataInput(this, showMenu)'>" + LABEL_WHERE + ": </label>"; 
+
+    	if(restaurant == null) {
+			showDataInput(dWhere, showMenu);
+		} else {
+			for(var index in restaurants) {
+				dWhere.innerHTML += "<input type='button' value='" + restaurants[index] + "' id='" + restaurants[index] + "' onclick='showMenu(this.value)'>"; 
+			}			
+		}		
 		document.getElementById('div_help_label').innerHTML = MSG_SELECT_WHERE;
     }
-    
+
     function showMenu(restaurant) {
-		setToggle(restaurant);
-		var dWhat = document.getElementById('div_what');
+		//setToggle(restaurant);
+
+		var dWhat = document.getElementById('div_what');		
+		dWhat.innerHTML = "<label onclick='showDataInput(this, showGroup)'>" + LABEL_WHAT + ": </label>";
+
 		menus = APPDATA[restaurant];
-		dWhat.innerHTML = "<label onclick='showDataInput(this)'>" + LABEL_WHAT + ": </label>";
-		for(var key in menus) {
-			dWhat.innerHTML += "<input type='button' value='" + key + " (" + menus[key] + "원)' id='" + restaurant + "_" + key + "' onclick='setMenu(\"" + key + "\")'>"; 
+		if(menus == null || menus == undefined) {
+			showDataInput(dWhat, showMenu);
+		} else {			
+			for(var key in menus) {
+				dWhat.innerHTML += "<input type='button' value='" + key + " (" + menus[key] + "원)' id='" + restaurant + "_" + key + "' onclick='setMenu(\"" + key + "\")'>"; 
+			}
 		}
+		
 		document.getElementById('div_help_label').innerHTML = MSG_SELECT_WHAT;
 	}
 	
-	function setToggle(restaurant) {
+	/*function setToggle(restaurant) {
 		if(data[WHERE] == restaurant) {
 			console.log(restaurant + " is OFF");
 			data[WHERE] = null;
@@ -70,7 +80,7 @@
 				}
 			}
 		}
-	}
+	}*/
   
 	function setMenu(menu) {
 		selectedMenu = menu;
@@ -82,7 +92,7 @@
 
     function showGroup() {
 		var dGroup = document.getElementById('div_whog'); 
-		dGroup.innerHTML = "<label onclick='showDataInput(this)'>" + LABEL_WHO_GROUP + ":</label>";
+		dGroup.innerHTML = "<label onclick='showDataInput(this, showMember)'>" + LABEL_WHO_GROUP + ":</label>";
 		dGroup.innerHTML += "<input type='button' value='All' id='all' onclick='showMember(this.value)'>";   
 		for(var index in groups) {
 			dGroup.innerHTML += "<input type='button' value='" + groups[index] + "' id='" + groups[index] + "' onclick='showMember(this.value)'>"; 
@@ -137,7 +147,7 @@
 		}
 	}
 
-	function showDataInput(element) {
+	function showDataInput(element, func) {
         var doc = element.parentElement;
         if(flag[doc.id] == "+") {
 			flag[doc.id] = "-";  
@@ -148,16 +158,17 @@
         } else {
          	flag[doc.id] = "+";  
 			doc.innerHTML += "<input type='text' id='input_" + doc.id + "'>";
-    	    doc.innerHTML += "<input type='button' id='confirm_" + doc.id + "' value='확인' onclick='addData(this.parentElement)'>";
+    	    doc.innerHTML += "<input type='button' id='confirm_" + doc.id + "' value='확인' onclick='addData(this.parentElement, " + func + ")'>";
         }
 	}
 	
-	function addData(doc) {
+	function addData(doc, callback) {
 		var key = doc.className;
 		var d = document.getElementById('input_'+doc.id);
 		var value = document.getElementById('input_'+doc.id).value;
 		APPDATA[key].push(value);
-		save(APPDATA);
+		//save(APPDATA);
+		callback(value);
 	}
 	
 	function showResult() {
