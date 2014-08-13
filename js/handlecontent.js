@@ -17,9 +17,21 @@ var flag = {
     "member" : ""
 };
 
+var WHEN= {
+    key : "when",
+    label : LABEL_WHEN, 
+    callback : function () {
+        var dWhen = document.getElementById('div_when');
+        dWhen.innerHTML = "<label onclick='showDataInput(this)'>" + WHEN.label + ": <input type='date' id='date' /></label>";      
+        document.getElementById('date').valueAsDate = new Date();  
+        WHERE.callback();
+    }
+};
+
 var WHERE = {
     key : "where",
-    nextFunction : function (value) {			
+    label : LABEL_WHEN, 
+    callback : function (value) {			
 
         var dWhat = document.getElementById('div_what');		
         dWhat.innerHTML = "<label onclick='makeNewText(this.parentElement)'>" + LABEL_WHAT + ": </label>";
@@ -37,19 +49,20 @@ var WHERE = {
     }
 };
 
-function showContent() {
+function showContent(callback) {
     data = {};
+	callback();
+//    var dWhen = document.getElementById('div_when');
+//    
+//    dWhen.innerHTML = "<label onclick='showDataInput(this)'>" + LABEL_WHEN + ": <input type='date' id='date' /></label>";      
+//    document.getElementById('date').valueAsDate = new Date();
 
-    var dWhen = document.getElementById('div_when');
-    dWhen.className = a.className;
-    dWhen.innerHTML = "<label onclick='showDataInput(this)'>" + LABEL_WHEN + ": <input type='date' id='date' /></label>";      
-    document.getElementById('date').valueAsDate = new Date();
-
-    showRestaurant();
+//    showRestaurant();
 }
 
 function showRestaurant() {
     var dWhere = document.getElementById('div_where');
+    dWhere.className = WHERE.key;
     dWhere.innerHTML += "<label onclick='makeNewText(this.parentElement)'>" + LABEL_WHERE + ": </label>"; 
 
     if(restaurants == 'undefined' || restaurants == null) {

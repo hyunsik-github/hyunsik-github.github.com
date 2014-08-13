@@ -98,7 +98,7 @@ function checkData(result) {
                 }
                 //console.log(key + ":" + APPDATA[key]);
             }
-            showContent();
+            showContent(WHEN.callback);
         });    
     } else {
         console.log('No Data File');
