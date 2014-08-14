@@ -31,7 +31,7 @@ function initializeElements() {
 
             var restaurants = APPDATA[WHERE.key];
             if(restaurants == 'undefined' || restaurants == null) {
-                addText(dWhere);
+                addText(WHERE.key, WHERE.maxcnt);
             } else {			
                 for(var index in restaurants) {
                     dWhere.innerHTML += "<input type='button' name='button_where' value='" + restaurants[index] + "' onclick='showMenu(this.value)'>"; 
@@ -56,7 +56,7 @@ function initializeElements() {
 
             var menus = APPDATA[selection];
             if(menus == 'undefined' || menus == null) {
-                addText(dWhat);
+                addText(WHAT.key, WHAT.maxcnt);
             } else {			
                 for(var key in menus) {
                     dWhat.innerHTML += "<input type='button' name='button_what' value='" + key + " (" + menus[key] + "원)' onclick='setMenu(\"" + key + "\")'>"; 
@@ -213,13 +213,13 @@ function converButton(event, element, key) {
                     document.getElementById('div_help_label').innerHTML = "중복 데이터가 있습니다.";
                     break;
                 }
-            }          
-            if(isUnique) {
-                doc.innerHTML += "<input type='button' name='button_" + key + "' value='" + value + "' onclick='showMenu(this.value)'>"; 
-                var child = document.getElementById(element.id);
-                doc.removeChild(child);
-                document.getElementById('div_help_label').innerHTML = "";
             }
-        }        
+        }
+        if(isUnique) {
+            doc.innerHTML += "<input type='button' name='button_" + key + "' value='" + value + "' onclick='showMenu(this.value)'>"; 
+            var child = document.getElementById(element.id);
+            doc.removeChild(child);
+            document.getElementById('div_help_label').innerHTML = "";
+        }
     }
 }
