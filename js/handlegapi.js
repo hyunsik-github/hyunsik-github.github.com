@@ -25,8 +25,12 @@ function executeWithDrive(callback) {
 
 function handleAuthResult(authResult) {
     if (authResult) {
+        initializeElements();
         // Access token has been successfully retrieved, requests can be sent to the API
-        executeWithDrive(getAppData);
+
+        executeWithDrive(getFileList);
+        //(query, checkAppDataFile);
+
         //listFilesInApplicationDataFolder(checkApplicationDataFile);           
         //createApplicationDataFile();
     } else {
@@ -37,18 +41,24 @@ function handleAuthResult(authResult) {
     }
 }
 
-function getAppData() {
+function getAppMetaData(callback) {
     var request = gapi.client.drive.files.get({
         'fileId': 'appdata'
     });
     request.execute(function(resp) {
         APPDATA_META = resp;
-        console.log(resp.title + ':' + APPDATA_META.id);
-        getDataFromAppData();
+        console.log("Get MetaData [" + resp.title + ":" + resp.id + "]");
+        callback(resp.id);
     });
 }
 
-function getDataFromAppData() {     
+function getFileList() { 
+    //var query = '\'appdata\' in parents and title = \'' + APPDATA_NAME + '\'';
+    var query = 'title = \'aaa.aaa\'';    
+    var listRequest = gapi.client.drive.files.list({
+        'q': query        
+    });
+
     var retrievePageOfFiles = function(request, result) {
         request.execute(function(resp) {
             result = result.concat(resp.items);
@@ -59,19 +69,15 @@ function getDataFromAppData() {
                 });
                 retrievePageOfFiles(request, result);
             } else {
-                checkData(result);
+                checkAppDataFile(result);
             }
         });
-    };
-    //var query = '\'appdata\' in parents and title = \'' + APPDATA_NAME + '\'';
-    var query = 'title = \'aaa.aaa\'';
-    var listRequest = gapi.client.drive.files.list({
-        'q': query        
-    });
+    };    
+
     retrievePageOfFiles(listRequest, []);
 }
 
-function checkData(result) {
+function checkAppDataFile(result) {
     var isFind = false;
     var item;
     for(var index in result) {
@@ -86,28 +92,28 @@ function checkData(result) {
     }     
 
     if(isFind) {        
-        getFileContent(item, function (response) {
+        getFileData(item, function (response) {
             APPDATA = JSON.parse(response);
-            for(var key in APPDATA) {   
-                if(WHOG == key) {
-                    groups = APPDATA[key];
-                } else if(WHOM == key) {
-                    members = APPDATA[key];
-                } else if(WHERE[key] == key) {
-                    restaurants = APPDATA[key];
-                }
-                //console.log(key + ":" + APPDATA[key]);
-            }
+            //            for(var key in APPDATA) {   
+            //                if(WHOG[key] == key) {
+            //                    groups = APPDATA[key];
+            //                } else if(WHOM[key] == key) {
+            //                    members = APPDATA[key];
+            //                } else if(WHERE[key] == key) {
+            //                    restaurants = APPDATA[key];
+            //                }
+            //                //console.log(key + ":" + APPDATA[key]);
+            //            }
             showContent(WHEN.callback);
         });    
     } else {
-        console.log('No Data File');
-        var createData = function () {
+        console.log('No AppData File exist');        
+        var createAppData = function (id) {
             var metadata = {
-                'title': 'data.json',
+                'title': APPDATA_NAME,
                 'mimeType': 'application/json',
                 'parents': [{
-                    'id': APPDATA_META.id
+                    'id': id
                 }]
             };
 
@@ -119,15 +125,15 @@ function checkData(result) {
             });
 
             request.execute(function(file) {
-                console.log('Data Created');
-                console.log(file);
+                console.log('AppData Created');
+                //console.log(file);
             });
         };
-        createData();
+        getAppMetaData(createAppData);
     }
 }
 
-function getFileContent(file, callback) {
+function getFileData(file, callback) {
     var url;
     if (file.downloadUrl) {
         url = file.downloadUrl;

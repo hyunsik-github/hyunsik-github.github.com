@@ -1,117 +1,89 @@
-var WHAT="what";
-var WHOG="whog";
-var WHOM="whom";
-
-var restaurants;
-var menus;
-var groups;
-var members;	
-
 var selectedMenu;
 
-var data;
-var flag = {
-    "where" : "",
-    "what" : "",
-    "who" : "",
-    "member" : ""
-};
+var WHEN, WHERE, WHAT, WHOG, WHOM;
+var ELS = [WHEN, WHERE, WHAT, WHOG, WHOM];
 
-var WHEN= {
-    key : "when",
-    label : LABEL_WHEN, 
-    callback : function () {
-        var dWhen = document.getElementById('div_when');
-        dWhen.innerHTML = "<label onclick='showDataInput(this)'>" + WHEN.label + ": <input type='date' id='date' /></label>";      
-        document.getElementById('date').valueAsDate = new Date();  
-        WHERE.callback();
-    }
-};
 
-var WHERE = {
-    key : "where",
-    label : LABEL_WHEN, 
-    callback : function (value) {			
+function initializeElements() {
+    WHEN = {
+        key : "when",
+        label : LABEL_WHEN, 
+        helpmsg : "",
+        func : function () {
+            var dWhen = document.getElementById('div_when');
+            dWhen.innerHTML = "<label>" + WHEN.label + " : <input type='date' id='date' /></label>";      
+            document.getElementById('date').valueAsDate = new Date();  
+            WHERE.func();
+        },
+        macxcnt : 1
+    };
 
-        var dWhat = document.getElementById('div_what');		
-        dWhat.innerHTML = "<label onclick='makeNewText(this.parentElement)'>" + LABEL_WHAT + ": </label>";
+    WHERE = {
+        key : "where",
+        label : LABEL_WHERE, 
+        helpmsg : MSG_SELECT_WHERE,
+        func : function (value) {			
 
-        menus = APPDATA[value];
-        if(menus == 'undefined' || menus == null) {
-            makeNewText(dWhat);
-        } else {			
-            for(var key in menus) {
-                dWhat.innerHTML += "<input type='button' name='div_what_button' value='" + key + " (" + menus[key] + "원)' onclick='setMenu(\"" + key + "\")'>"; 
+            var dWhere = document.getElementById('div_where');		
+
+            dWhere.innerHTML = "<input type='button' value='+' onclick='addText(\"" + WHERE.key + "\", " + WHERE.maxcnt + ")'>"; 
+            dWhere.innerHTML += "<label>" + WHERE.label + " : </label>";
+
+            var restaurants = APPDATA[WHERE.key];
+            if(restaurants == 'undefined' || restaurants == null) {
+                addText(dWhere);
+            } else {			
+                for(var index in restaurants) {
+                    dWhere.innerHTML += "<input type='button' name='button_where' value='" + restaurants[index] + "' onclick='showMenu(this.value)'>"; 
+                }
             }
-        }
 
-        document.getElementById('div_help_label').innerHTML = MSG_SELECT_WHAT;
-    }
-};
+            document.getElementById('div_help_label').innerHTML = WHERE.helpmsg;
+        },
+        maxcnt : 1
+    };
 
-function showContent(callback) {
-    data = {};
-	callback();
-//    var dWhen = document.getElementById('div_when');
-//    
-//    dWhen.innerHTML = "<label onclick='showDataInput(this)'>" + LABEL_WHEN + ": <input type='date' id='date' /></label>";      
-//    document.getElementById('date').valueAsDate = new Date();
+    WHAT = {
+        key : "what",
+        label : LABEL_WHAT,
+        helpmsg : MSG_SELECT_WHAT,
+        func: function (selection) {            
+            selectedMenu = selection;
 
-//    showRestaurant();
+            var dWhat = document.getElementById('div_what');		
+            dWhat.innerHTML = "<input type='button' value='+' onclick='addText(\"" + WHAT.key + "\", " + WHAT.maxcnt + ")'>"; 
+            dWhat.innerHTML += "<label>" + WHAT.label + " : </label>";
+
+            var menus = APPDATA[selection];
+            if(menus == 'undefined' || menus == null) {
+                addText(dWhat);
+            } else {			
+                for(var key in menus) {
+                    dWhat.innerHTML += "<input type='button' name='button_what' value='" + key + " (" + menus[key] + "원)' onclick='setMenu(\"" + key + "\")'>"; 
+                }
+            }
+
+            document.getElementById('div_help_label').innerHTML = WHAT.helpmsg;
+        },
+        maxcnt : 20
+    };
+
+    WHOG = {
+        key : "whog"
+    };
+
+    WHOM = {
+        key : "whom"
+    };
 }
 
-function showRestaurant() {
-    var dWhere = document.getElementById('div_where');
-    dWhere.className = WHERE.key;
-    dWhere.innerHTML += "<label onclick='makeNewText(this.parentElement)'>" + LABEL_WHERE + ": </label>"; 
-
-    if(restaurants == 'undefined' || restaurants == null) {
-        makeNewText(dWhere);
-    } else {
-        for(var index in restaurants) {
-            dWhere.innerHTML += "<input type='button' name='div_where_button' value='" + restaurants[index] + "' onclick='showMenu(this.value)'>"; 
-        }			
-    }		
-    document.getElementById('div_help_label').innerHTML = MSG_SELECT_WHERE;
+function showContent() {    
+    WHEN.func();    
 }
 
 function showMenu(restaurant) {
-    //setToggle(restaurant);
-
-    var dWhat = document.getElementById('div_what');		
-    dWhat.innerHTML = "<label onclick='makeNewText(this.parentElement)'>" + LABEL_WHAT + ": </label>";
-
-    menus = APPDATA[restaurant];
-    if(menus == 'undefined' || menus == null) {
-        makeNewText(dWhat);
-    } else {			
-        for(var key in menus) {
-            dWhat.innerHTML += "<input type='button' name='div_what_button' value='" + key + " (" + menus[key] + "원)' onclick='setMenu(\"" + key + "\")'>"; 
-        }
-    }
-
-    document.getElementById('div_help_label').innerHTML = MSG_SELECT_WHAT;
+    WHAT.func(restaurant);
 }
-
-/*function setToggle(restaurant) {
-		if(data[WHERE[key]] == restaurant) {
-			console.log(restaurant + " is OFF");
-			data[WHERE[key]] = null;
-			for(var index in restaurants) {
-				document.getElementById(restaurants[index]).readOnly = false;
-			}
-		}
-		else {
-			data[WHERE[key]] = restaurant;
-			for(var index in restaurants) {
-				if(restaurant[index] != restaurant) {
-					document.getElementById(restaurants[index]).readOnly = true;
-				} else {
-					console.log(restaurant + " is ON");
-				}
-			}
-		}
-	}*/
 
 function setMenu(menu) {
     selectedMenu = menu;
@@ -177,39 +149,19 @@ function removeMemberData(member) {
         memberArr.splice(index, 1);
     }
 }
-function makeNewText(doc) {
-    var name = doc.id + "_text";
-    var button_cnt = document.getElementsByName(doc.id + "_button").length;
+function addText(key, max) {
+    var doc = document.getElementById("div_" + key);
+
+    var name = "text_" + key;
+
+    //var button_cnt = document.getElementsByName("button_" + key).length;
     var text_cnt = document.getElementsByName(name).length;
-    var newText = "<input type='text' name='" + name + "' id='" + name + (text_cnt + 1) + "' onkeypress='keychecker(event, this)'>";
 
-    if(button_cnt == 0 && text_cnt == 0) {
+    var newText = "<input type='text' name='" + name + "' id='" + name + (text_cnt + 1) + "' onkeypress='converButton(event, this, \"" + key + "\")'>";
+
+    if(text_cnt < max) {
         doc.innerHTML += newText;
-    } else {			
-        if(flag[doc.id] == "+") {
-            flag[doc.id] = "-";  
-            var child = document.getElementById(name + (text_cnt));
-            doc.removeChild(child);				
-        } else {
-            flag[doc.id] = "+";  
-            doc.innerHTML += newText;
-        }
-    }
-}
-
-function showDataInput(element) {
-    var doc = element.parentElement;
-    if(flag[doc.id] == "+") {
-        flag[doc.id] = "-";  
-        var child = document.getElementById('input_'+doc.id);
-        doc.removeChild(child);
-        child = document.getElementById('confirm_'+doc.id);
-        doc.removeChild(child);
-    } else {
-        flag[doc.id] = "+";  
-        doc.innerHTML += "<input type='text' id='input_" + doc.id + "' onkeypress='keychecker(event)'>";
-        //doc.innerHTML += "<input type='button' id='confirm_" + doc.id + "' value='확인' onclick='addData(this.parentElement)'>";
-    }
+    }    
 }
 
 function addData(doc) {
@@ -247,9 +199,27 @@ function save(data) {
     //writeData(null, data);
 }
 
-function keychecker(event, element) {
-    var doc = element.parentElement;		
+function converButton(event, element, key) {    
     if(event.keyCode == 13) {
-        console.log(element.value);		
+        var values = APPDATA[key];
+        var value = element.value;
+        var doc = element.parentElement;
+        var isUnique = true;
+
+        if(typeof(values) != 'undefined' && values != null) {
+            for(var index in values) {
+                if(values[index] == value) {
+                    isUnique = false;
+                    document.getElementById('div_help_label').innerHTML = "중복 데이터가 있습니다.";
+                    break;
+                }
+            }          
+            if(isUnique) {
+                doc.innerHTML += "<input type='button' name='button_" + key + "' value='" + value + "' onclick='showMenu(this.value)'>"; 
+                var child = document.getElementById(element.id);
+                doc.removeChild(child);
+                document.getElementById('div_help_label').innerHTML = "";
+            }
+        }        
     }
 }
