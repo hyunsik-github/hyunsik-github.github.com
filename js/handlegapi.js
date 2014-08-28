@@ -93,8 +93,18 @@ function checkAppDataFile(result) {
 
     if(isFind) {        
         getFileData(item, function (response) {
-            APPDATA = JSON.parse(response);            
-            showContent();
+            APPDATA = JSON.parse(response);
+            // for(var key in APPDATA) {
+            // if(WHOG[key] == key) {
+            //     groups = APPDATA[key];
+            // } else if(WHOM[key] == key) {
+            //     members = APPDATA[key];
+            // } else if(WHERE[key] == key) {
+            //     restaurants = APPDATA[key];
+            // }
+            //console.log(key + ":" + APPDATA[key]);
+            // }
+            showContent(WHEN.callback);
         });    
     } else {
         console.log('No AppData File exist');        
